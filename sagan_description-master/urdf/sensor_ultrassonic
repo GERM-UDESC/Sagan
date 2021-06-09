@@ -1,0 +1,73 @@
+ <!-- definição ultrassonico -->
+  <link name="hcsr04_link"> <!-- abre o link para descrever as características físicas do ultrassonico, nome a sua escolha, pode ser o nome do objeto -->
+   <collision> <!--dimensão do ultrassonico-->
+     <origin xyz="0 0 0" rpy="0 0 0"/> <!--origem padrão-->
+     <geometry>
+   <box size="0.02 0.05 0.02"/> <!--geometria do ultrassonico-->
+     </geometry> <!--fecha geometria-->
+   </collision> <!--fecha collision-->
+
+   <visual> <!--abre a forma do robo-->
+     <origin xyz="0 0 0" rpy="0 0 0"/> <!--origem padrão-->
+     <geometry>
+   <box size="0.02 0.05 0.02"/> <!--define se é um cubo, uma esfera ou um arquivo do SolidWorks-->
+     </geometry>
+   </visual>
+
+   <inertial> <!-- abre inércia do ultrassonico -->
+     <mass value="1e-3" /> <!--massa do ultrassonico-->
+     <origin xyz="0 0 0" rpy="0 0 0"/> <!--origem padrão-->
+     <inertia ixx="1e-3" ixy="0" ixz="0" iyy="1e-3" iyz="0" izz="1e-3" /> <!--inércia em todos os planos-->
+   </inertial> <!--fim da inércia-->
+ </link> <!--fecha o link que descreve as características físicas do ultrassonico-->
+
+   <!-- Junta, parte que fixa o ultrassonico no robo -->
+   <joint name="hcsr04_joint" type="fixed"> <!-- nome da junta a sua escolha, e o seu tipo será fixo, mas poderia ser móvel-->
+   <axis xyz="0 1 0" />  <!--eixo de rotação-->
+   <origin xyz="0.175 0 0.05" rpy="0 0 0"/>  <!--onde o ultrassonico estará no robo-->
+   <parent link="sagan_link"/>  <!--qual link ele vai estar vinculado, no caso o robo sagan-->
+   <child link="hcsr04_link"/>  <!--qual link será vinculado ao robo-->
+ </joint>
+
+  <!-- Plugin parametros ultrassonico -->
+   <gazebo reference="hcsr04_link">  <!--qual link irá para o gazebo-->
+   <sensor type="ray" name="hcsr04_sensor">  <!--tipo do sensor-->
+     <pose>0 0 0 0 0 0</pose> 
+     <visualize>true</visualize>
+     <update_rate>10</update_rate>  <!--taxa que ele atualiza o sensor-->
+     <ray>
+       <scan>
+         <horizontal>
+           <samples>10</samples>  <!--quantidade de linhas de infravermelho-->
+           <resolution>1</resolution>  <!--resolução padrão-->
+           <min_angle>-0.131</min_angle>  <!--angulo minimo de abertura horizontal-->
+           <max_angle>0.131</max_angle>  <!--angulo maximo de abertura horizontal-->
+         </horizontal>
+   <vertical>
+           <samples>10</samples>  <!--quantidade de linhas de infravermelho-->
+           <resolution>1</resolution> <!--resolução padrão-->
+           <min_angle>-0.131</min_angle> <!--angulo minimo de abertura vertical-->
+           <max_angle>0.131</max_angle> <!--angulo maximo de abertura vertical-->
+         </vertical>
+       </scan>
+       <range>
+         <min>0.05</min> <!--alcance minimo do ultrassonico-->
+         <max>3.50</max> <!--alcance maximo do ultrassonico-->
+         <resolution>1</resolution> <!--resolução padrão-->
+       </range>
+       <noise>
+         <type>gaussian</type>
+         <!-- Noise parameters based on published spec for Hokuyo laser
+              achieving "+-30mm" accuracy at range < 10m.  A mean of 0.0m and
+              stddev of 0.01m will put 99.7% of samples within 0.03m of the true
+              reading. -->
+         <mean>0.0</mean>
+         <stddev>0.01</stddev>
+       </noise>
+     </ray>
+     <plugin name="gazebo_ros_hcsr04_controller" filename="libgazebo_ros_laser.so">
+       <topicName>/sagan_gazebo/laser/scan</topicName>
+       <frameName>hcsr04_link</frameName>
+     </plugin>
+   </sensor>
+ </gazebo>

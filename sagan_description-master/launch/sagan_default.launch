@@ -1,0 +1,18 @@
+<launch>
+  <!-- Set up env variable so plugin are found -->
+  <env name="GAZEBO_MODEL_PATH" value="$(find sagan_description)/"/>
+  <env name="GAZEBO_PLUGIN_PATH" value="$(find sagan_description)/build/devel/lib/"/>
+
+  <!-- We resume the logic in empty_world.launch, changing only the name of the world to be launched -->
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="verbose" default="false"/>
+    <arg name="world_name" value="$(find sagan_description)/worlds/sagan.world"/>
+    <!-- more default parameters can be changed here -->
+  </include>
+
+<!--<param name ="robot_description" command="$(find sagan_description)/urdf/sagan.urdf">-->
+
+<!-- Spawn a robot into Gazebo -->
+<node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-file $(find sagan_description)/urdf/sagan.urdf -urdf -z 1 -model sagan" />
+
+</launch>
